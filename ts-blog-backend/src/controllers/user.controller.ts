@@ -33,8 +33,16 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 		const token = jwt.sign({ _id: user._id.toString() }, jwtToken);
 		user.tokens = user.tokens.concat({ token });
 		await user.save();
-		
+
 		res.status(200).send({user, token});
+	} catch(e) {
+		res.status(400).send();
+	}
+}
+
+const getUsers = async (req: express.Request, res: express.Response) => {
+	try {
+		res.status(200).send(req.body.userObject);
 	} catch(e) {
 		res.status(400).send();
 	}
@@ -42,7 +50,8 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 
 const _ = {
 	createUser,
-	loginUser
+	loginUser,
+	getUsers
 }
 
 export default _;
