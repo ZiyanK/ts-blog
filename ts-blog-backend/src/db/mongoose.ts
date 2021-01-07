@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
+const { mongoUri } = require("../utils/config");
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/ts-blog";
+const MONGO_URI = mongoUri || "mongodb://127.0.0.1:27017/ts-blog";
 
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
 
 mongoose.connection.on("open", () => {
 	console.info("Connected to Mongo");

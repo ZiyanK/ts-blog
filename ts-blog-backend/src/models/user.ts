@@ -1,5 +1,12 @@
-import mongoose from "mongoose";
-import validator from "validator";
+import * as mongoose from "mongoose";
+import * as bcrypt from "bcryptjs";
+
+interface IUser extends mongoose.Document {
+	name: string;
+	email: string;
+	password: string;
+	tokens: Array<Object>;
+}
 
 const UserSchema = new mongoose.Schema({
 	name: {
@@ -12,23 +19,38 @@ const UserSchema = new mongoose.Schema({
 		required: true,
 		unique: true,
 		trim: true,
-		lowercase: true,
-		validate(value: string) {
-			if(!validator.isEmail(value)) {
-				throw new Error("Email is invalid");
-			}
-		}
+		lowercase: true
 	},
 	password: {
 		type: String,
 		required: true,
 		minlength: 6
 	},
-	articles: {
-		type: [String]
-	}
+	tokens: [{
+		token: {
+			type: String,
+			required: true
+		}
+	}]
+}, {
+	timestamps: true
 });
 
-const UserModel = mongoose.model('user', UserSchema);
+UserSchema.statics.findByCredentials = async (email: string, password: string)=> {
+	const user = await User.findOne({ email })
 
-export default UserModel;
+	if(!user) {
+		throw new Error("Unable to login");
+	}
+
+	const isMatch = await bcrypt.compare(password, user.password)
+	if(!isMatch) {
+		throw new Error("Unable to login");
+	}
+
+	return user;
+}
+
+const User: mongoose.Model<IUser> = mongoose.model<IUser>('user', UserSchema);
+
+export default User;

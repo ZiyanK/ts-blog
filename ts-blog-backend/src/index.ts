@@ -1,8 +1,9 @@
 import app from "./app";
 import http from "http";
 require("./db/mongoose");
+const { port } = require("./utils/config");
 
-const PORT = process.env.PORT || 8080;
+const PORT = port;
 const server = http.createServer(app);
 
 server.listen(PORT);
