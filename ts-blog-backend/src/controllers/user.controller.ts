@@ -4,13 +4,16 @@ import * as jwt from "jsonwebtoken";
 const { jwtToken } = require("../utils/config");
 
 import User from "../models/user";
+import publicProfile from "../helper/publicProfile";
+import { IUser, IUserPublic } from "../interfaces";
 
 const createUser = async (req: express.Request, res: express.Response) => {
 	req.body.password = await bcrypt.hash(req.body.password, 8);
-	const user = new User(req.body);
+	const user:IUser = new User(req.body);
 	try {
 		await user.save()
-		res.status(201).send(user);
+		let userPublic = publicProfile(user);
+		res.status(201).send({'user':userPublic});
 	} catch(e) {
 		res.status(400).send(e);
 	}
@@ -21,7 +24,8 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 		let email = req.body.email;
 		let password = req.body.password;
 
-		const user = await User.findOne({ email })
+		const user:IUser = await User.findOne({ email })
+		console.log(user);
 		if(!user) {
 			throw new Error("Unable to login");
 		}
@@ -34,7 +38,9 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 		user.tokens = user.tokens.concat({ token });
 		await user.save();
 
-		res.status(200).send({user, token});
+		let userPublic:IUserPublic = publicProfile(user);
+
+		res.status(200).send({user: userPublic, token});
 	} catch(e) {
 		res.status(400).send();
 	}
@@ -58,7 +64,7 @@ const logoutUser = async (req: express.Request, res: express.Response) => {
 
 const logoutUserAll = async (req: express.Request, res: express.Response) => {
 	try {
-		let user = req.body.userObject;
+		let user:IUser = req.body.userObject;
 		user.tokens = [];
 		await user.save();
 

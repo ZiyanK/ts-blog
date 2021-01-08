@@ -1,12 +1,6 @@
 import * as mongoose from "mongoose";
-import * as bcrypt from "bcryptjs";
 
-interface IUser extends mongoose.Document {
-	name: string;
-	email: string;
-	password: string;
-	tokens: Array<Object>;
-}
+import { IUser } from "../interfaces";
 
 const UserSchema = new mongoose.Schema({
 	name: {
@@ -35,21 +29,6 @@ const UserSchema = new mongoose.Schema({
 }, {
 	timestamps: true
 });
-
-UserSchema.statics.findByCredentials = async (email: string, password: string)=> {
-	const user = await User.findOne({ email })
-
-	if(!user) {
-		throw new Error("Unable to login");
-	}
-
-	const isMatch = await bcrypt.compare(password, user.password)
-	if(!isMatch) {
-		throw new Error("Unable to login");
-	}
-
-	return user;
-}
 
 const User: mongoose.Model<IUser> = mongoose.model<IUser>('user', UserSchema);
 
