@@ -25,7 +25,7 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 		let password = req.body.password;
 
 		const user:IUser = await User.findOne({ email })
-		console.log(user);
+
 		if(!user) {
 			throw new Error("Unable to login");
 		}
@@ -50,7 +50,6 @@ const logoutUser = async (req: express.Request, res: express.Response) => {
 	try {
 		let user = req.body.userObject;
 		user.tokens = user.tokens.filter((token: { token: object; }) => {
-			console.log(token);
 			return token.token !== req.body.token
 		})
 		await user.save();
@@ -77,7 +76,32 @@ const logoutUserAll = async (req: express.Request, res: express.Response) => {
 
 const getProfileData = async (req: express.Request, res: express.Response) => {
 	try {
-		res.status(200).send(req.body.userObject);
+		let userPublic:IUserPublic = publicProfile(req.body.userObject);
+		res.status(200).send(userPublic);
+	} catch(e) {
+		res.status(400).send();
+	}
+}
+
+const updateProfile = async (req: express.Request, res: express.Response) => {	
+	try {
+		let user:IUser = req.body.userObject;
+
+		await User.findOneAndUpdate(user._id, {
+			name: req.body.name,
+			email: req.body.email
+		})
+		res.status(200).send("Updated");
+	} catch(e) {
+		res.status(400).send();
+	}
+}
+
+const deleteProfile =  async (req: express.Request, res: express.Response) => {
+	try {
+		let user:IUser = req.body.userObject;
+		await User.findByIdAndDelete(user._id);
+		res.status(200).send("Deleted");
 	} catch(e) {
 		res.status(400).send();
 	}
@@ -88,7 +112,9 @@ const _ = {
 	loginUser,
 	logoutUser,
 	logoutUserAll,
-	getProfileData
+	getProfileData,
+	updateProfile,
+	deleteProfile
 }
 
 export default _;

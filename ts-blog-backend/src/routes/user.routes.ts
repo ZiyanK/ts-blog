@@ -19,4 +19,8 @@ router.post("/logoutAll", userAuth, userControllers.logoutUserAll);
 
 router.get("/me", userAuth, userControllers.getProfileData);
 
+router.put("/me", userAuth, userControllers.updateProfile);
+
+router.delete("/me", userAuth, userControllers.deleteProfile);
+
 export default router;
