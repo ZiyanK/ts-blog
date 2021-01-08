@@ -40,7 +40,36 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 	}
 }
 
-const getUsers = async (req: express.Request, res: express.Response) => {
+const logoutUser = async (req: express.Request, res: express.Response) => {
+	try {
+		let user = req.body.userObject;
+		user.tokens = user.tokens.filter((token: { token: object; }) => {
+			console.log(token);
+			return token.token !== req.body.token
+		})
+		await user.save();
+
+		res.send("Logged out");
+	} catch(e) {
+		console.log(e);
+		res.status(500).send();
+	}
+}
+
+const logoutUserAll = async (req: express.Request, res: express.Response) => {
+	try {
+		let user = req.body.userObject;
+		user.tokens = [];
+		await user.save();
+
+		res.send("Logged out from all devices");
+	} catch(e) {
+		console.log(e);
+		res.status(500).send();
+	}
+}
+
+const getProfileData = async (req: express.Request, res: express.Response) => {
 	try {
 		res.status(200).send(req.body.userObject);
 	} catch(e) {
@@ -51,7 +80,9 @@ const getUsers = async (req: express.Request, res: express.Response) => {
 const _ = {
 	createUser,
 	loginUser,
-	getUsers
+	logoutUser,
+	logoutUserAll,
+	getProfileData
 }
 
 export default _;

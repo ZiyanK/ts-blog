@@ -18,6 +18,7 @@ const userAuth = async (req: express.Request, res: express.Response, next: expre
 			throw new Error();
 		}
 		
+		req.body.token = token;
 		req.body.userObject = user;
 		next();
 	} catch(e) {

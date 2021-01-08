@@ -13,6 +13,10 @@ router.post("/create", userCreateMiddleware, userControllers.createUser);
 
 router.post("/login", userControllers.loginUser);
 
-router.get("/me", userAuth, userControllers.getUsers);
+router.post("/logout", userAuth, userControllers.logoutUser);
+
+router.post("/logoutAll", userAuth, userControllers.logoutUserAll);
+
+router.get("/me", userAuth, userControllers.getProfileData);
 
 export default router;
