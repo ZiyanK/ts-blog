@@ -5,7 +5,7 @@ const { jwtToken } = require("../utils/config");
 
 import User from "../models/user";
 import publicProfile from "../helper/publicProfile";
-import { IUser, IUserPublic } from "../interfaces";
+import { IUser, IUserPublic } from "../interfaces/user.interface";
 
 const createUser = async (req: express.Request, res: express.Response) => {
 	req.body.password = await bcrypt.hash(req.body.password, 8);

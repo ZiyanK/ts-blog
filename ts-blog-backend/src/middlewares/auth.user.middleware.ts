@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 const { jwtToken } = require("../utils/config");
 import User from "../models/user";
 
-import { IJWTDecoded } from "../interfaces";
+import { IJWTDecoded } from "../interfaces/user.interface";
 
 const userAuth = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 	try {

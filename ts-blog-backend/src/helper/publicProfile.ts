@@ -1,4 +1,4 @@
-import { IUser, IUserPublic } from "../interfaces";
+import { IUser, IUserPublic } from "../interfaces/user.interface";
 
 const publicProfile = (user: IUser) => {
 	let userObject:IUserPublic = {
