@@ -3,7 +3,9 @@ import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 const { jwtToken } = require("../utils/config");
 
+import Article from "../models/article";
 import User from "../models/user";
+
 import publicProfile from "../helper/publicProfile";
 import { IUser, IUserPublic } from "../interfaces/user.interface";
 
@@ -101,6 +103,7 @@ const updateProfile = async (req: express.Request, res: express.Response) => {
 const deleteProfile =  async (req: express.Request, res: express.Response) => {
 	try {
 		let user:IUser = req.body.userObject;
+		await Article.deleteMany({ author: user._id });
 		await User.findByIdAndDelete(user._id);
 		res.status(200).send("Deleted");
 	} catch(e) {
