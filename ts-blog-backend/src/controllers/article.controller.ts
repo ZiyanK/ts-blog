@@ -37,19 +37,17 @@ const getArticle = async (req: express.Request, res: express.Response) => {
 	}
 };
 
-//TODO: Fix logic
 const updateArticle = async (req: express.Request, res: express.Response) => {
 	try {
-		if(req.body.userObject._id.toString() === req.body.author._id.toString()) {
-			console.log("inside else");
-			const updatedArticle: IArticle = await Article.findOneAndUpdate({ _id: req.body._id}, {
-				title: req.body.title,
-				description: req.body.description,
-				content: req.body.content
-			})
+		const updatedArticle: IArticle = await Article.findOneAndUpdate({ $and: [{_id: req.params.id}, {author: req.body.userObject._id}] }, {
+			title: req.body.title,
+			description: req.body.description,
+			content: req.body.content
+		})
+		if(updatedArticle !== null) {
 			res.status(200).send("Updated");
 		} else {
-			res.status(400).send("Only the author can update this article");
+			res.status(400).send("Bad request");
 		}
 	} catch(e) {
 		console.log(e);
@@ -57,15 +55,13 @@ const updateArticle = async (req: express.Request, res: express.Response) => {
 	}
 };
 
-//TODO: Fix logic
 const deleteArticle = async (req: express.Request, res: express.Response) => {
 	try {
-		if(req.body.userObject._id.toString() === req.body.author._id.toString()) {
-			console.log("inside else");
-			const updatedArticle: IArticle = await Article.findOneAndDelete({ _id: req.body._id})
+		const deletedArticle: IArticle = await Article.findOneAndDelete({ $and: [{_id: req.params.id}, {author: req.body.userObject._id}] });
+		if(deletedArticle !== null) {
 			res.status(200).send("Deleted");
 		} else {
-			res.status(400).send("Only the author can delete this article");
+			res.status(400).send("Bad request");
 		}
 	} catch(e) {
 		console.log(e);
@@ -75,15 +71,13 @@ const deleteArticle = async (req: express.Request, res: express.Response) => {
 
 const getAllArticles = async (req: express.Request, res: express.Response) => {
 	try {
-		const articles = await Article.find({}).select('title author').populate('author', 'name')
+		const articles = await Article.find({}).select('title author').populate('author', 'name -_id')
 		res.status(200).send(articles);
 	} catch(e) {
 		console.log(e);
 		res.status(400).send(e);
 	}
 };
-
-
 
 const _ = {
 	createArticle,

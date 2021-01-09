@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post("/article", userAuth, articleControllers.createArticle);
 
-router.get("/", userAuth, articleControllers.getMyArticles);
+router.get("/article", userAuth, articleControllers.getMyArticles);
 
 router.get("/article/:id", userAuth, articleControllers.getArticle);
 
