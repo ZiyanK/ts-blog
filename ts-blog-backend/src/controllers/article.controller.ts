@@ -71,7 +71,8 @@ const deleteArticle = async (req: express.Request, res: express.Response) => {
 
 const getAllArticles = async (req: express.Request, res: express.Response) => {
 	try {
-		const articles = await Article.find({}).select('title author').populate('author', 'name -_id')
+		const queries = req.query;
+		const articles = await Article.find(queries).select('title tags author').populate('author', 'name -_id')
 		res.status(200).send(articles);
 	} catch(e) {
 		console.log(e);
