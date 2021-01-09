@@ -27,11 +27,11 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 		const user:IUser = await User.findOne({ email })
 
 		if(!user) {
-			throw new Error("Unable to login");
+			return res.status(400).send("Unable to login");
 		}
 		const isMatch = await bcrypt.compare(password, user.password);
 		if(!isMatch) {
-			throw new Error("Unable to login");
+			return res.status(400).send("Unable to login");
 		}
 
 		const token = jwt.sign({ _id: user._id.toString() }, jwtToken);
@@ -41,8 +41,9 @@ const loginUser = async (req: express.Request, res: express.Response) => {
 		let userPublic:IUserPublic = publicProfile(user);
 
 		res.status(200).send({user: userPublic, token});
-	} catch(e) {
-		res.status(400).send();
+	} catch(err) {
+		console.log(err);
+		res.status(400).send(err);
 	}
 }
 

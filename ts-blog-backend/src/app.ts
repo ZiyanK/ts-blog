@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 
 import userRoutes from "./routes/user.routes";
+import articleRoutes from "./routes/article.routes";
 
 const app = express();
 app.use(cors());
@@ -15,5 +16,6 @@ app.get("/", (req: express.Request, res: express.Response) => {
 })
 
 app.use("/user", userRoutes);
+app.use("/articles", articleRoutes);
 
 export default app;
