@@ -1,0 +1,25 @@
+.form {
+	height: 150px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.submit {
+	background-color: black;
+	width: 130px;
+	color: white;
+	border: none;
+	padding: 12px 15px;
+	border-radius: 10px;
+	margin: 15px;
+}
+
+.submit:hover {
+	cursor: pointer;
+}
+
+.submit:focus {
+	outline: none;
+}
