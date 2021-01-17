@@ -1,22 +1,45 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import Button from "@material-ui/core/Button";
+import * as yup from 'yup';
 import TextField from '@material-ui/core/TextField';
+import cookie from 'react-cookies';
+
+import { toastError, toastSuccess } from '../toasts/toasts';
+import {loginUser} from "../../api/requests";
+
+//Importing interfaces
+import {Ilogin} from "../../interfaces/user.interfaces";
+import {ILoginResponse} from "../../interfaces/response.interfaces";
 
 import styles from './styles.module.css';
 
-interface MyFormValues {
-	name: string;
-	email: string;
-	password: string;
-}
+const validationSchema = yup.object({
+	email: yup
+		.string()
+		.email('Enter a valid email')
+		.required('Email is required'),
+	password: yup
+		.string()
+		.min(8, 'Password should min 8 characters')
+		.required('Password is required'),
+});
 
 const Login: React.FC<{}> = () => {
-	const initialValues: MyFormValues = { name: '', email: '', password: '' };
+	const initialValues: Ilogin = { email: '', password: '' };
 	const formik = useFormik({
 		initialValues,
-		onSubmit: (values) => {
-			alert(JSON.stringify(values, null, 2));
+		validationSchema,
+		onSubmit: (values: Ilogin) => {
+			loginUser(values.email, values.password)
+			.then((res: ILoginResponse) => {
+				console.log(res);
+				// toastSuccess("User created.");
+				cookie.save('token', res.data.token, { path: '/' })
+			})
+			.catch(e => {
+				console.log(e);
+				toastError("Something went wrong. Please try again.")
+			})
 		},
 	  });
 	return (

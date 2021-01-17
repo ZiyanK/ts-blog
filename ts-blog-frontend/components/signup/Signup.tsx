@@ -1,16 +1,14 @@
 import React from 'react';
-import { FormikValues, useFormik } from 'formik';
-import Button from "@material-ui/core/Button";
+import { useFormik } from 'formik';
+// import Button from "@material-ui/core/Button";
 import * as yup from 'yup';
 import TextField from '@material-ui/core/TextField';
+import { toastError, toastSuccess } from '../toasts/toasts';
+
+import {signupUser} from "../../api/requests";
+import {Isignup} from "../../interfaces/user.interfaces";
 
 import styles from './styles.module.css';
-
-interface MyFormValues {
-	name: string;
-	email: string;
-	password: string;
-}
 
 const validationSchema = yup.object({
 	name: yup
@@ -27,19 +25,23 @@ const validationSchema = yup.object({
 });
 
 const Signup: React.FC<{}> = () => {
-	const initialValues: MyFormValues = { name: '', email: '', password: '' };
+	const initialValues: Isignup = { name: '', email: '', password: '' };
 	const formik = useFormik({
 		initialValues,
 		validationSchema,
-		onSubmit: async (values: FormikValues) => {
-			await fetch('http://localhost:8080/user/create', {
-				method: 'POST',
-				body: JSON.stringify(values)
+		onSubmit: async (values: Isignup) => {
+			signupUser(values.name, values.email, values.password)
+			.then((res) => {
+				console.log(res);
+				toastSuccess("User created.");
 			})
-			.then((res) => res.json())
-			.then((res) => console.log(res));
+			.catch(e => {
+				console.log(e);
+				toastError("Something went wrong. Please try again.")
+			})
 		},
-	  });
+	});
+	
 	return (
 		<div>
 			<form onSubmit={formik.handleSubmit} className={styles.form}>
